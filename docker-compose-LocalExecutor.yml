@@ -34,3 +34,14 @@ services:
             interval: 30s
             timeout: 30s
             retries: 3
+    lab:
+        image: my_docker
+        volumes:
+            - ./dags:/usr/local/airflow/notebooks
+        ports:
+            - "9876:9876"
+        environment:
+            JUPYTER_ENABLE_LAB: 1
+            GRANT_SUDO: "yes"
+        user: root
+        command: start-notebook.sh --ip=0.0.0.0 --NotebookApp.notebook_dir=/notebook --NotebookApp.token=''
