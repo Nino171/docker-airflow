@@ -12,7 +12,7 @@ services:
                 max-file: "3"
 
     webserver:
-        image: puckel/docker-airflow:1.10.9
+        image: puckel/docker-airflow:latest
         restart: always
         depends_on:
             - postgres
@@ -24,7 +24,7 @@ services:
                 max-size: 10m
                 max-file: "3"
         volumes:
-            - ./dags:/usr/local/airflow/dags
+            - dags:/usr/local/airflow/dags
             # - ./plugins:/usr/local/airflow/plugins
         ports:
             - "8080:8080"
@@ -35,13 +35,16 @@ services:
             timeout: 30s
             retries: 3
     lab:
-        image: my_docker
+        image: jlab
         volumes:
-            - ./dags:/usr/local/airflow/notebooks
+            - dags:/usr/local/airflow/dags
         ports:
-            - "9876:9876"
+            - "8888:8888"
         environment:
             JUPYTER_ENABLE_LAB: 1
             GRANT_SUDO: "yes"
         user: root
-        command: start-notebook.sh --ip=0.0.0.0 --NotebookApp.notebook_dir=/notebook --NotebookApp.token=''
+        working_dir: /home/jovyan/work
+        command: start-notebook.sh --ip=0.0.0.0 --allow-root --NotebookApp.token=''
+volumes:
+        dags:
